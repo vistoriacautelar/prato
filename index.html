@@ -94,14 +94,31 @@ header { display: flex; justify-content: space-between; align-items: baseline; m
   padding: 8px 14px; border-radius: 10px; font-size: 13px; font-weight: 500;
   font-family: inherit; cursor: pointer; white-space: nowrap;
 }
+.shoot-row { display: flex; gap: 10px; margin-bottom: 24px; }
 .shoot {
-  width: 100%; padding: 22px 24px; background: var(--text); color: var(--bg);
-  border: none; border-radius: 20px; font-size: 17px; font-weight: 500; cursor: pointer;
-  display: flex; align-items: center; justify-content: center; gap: 12px;
-  margin-bottom: 24px; transition: transform .1s;
+  flex: 1; padding: 18px 16px; background: var(--text); color: var(--bg);
+  border: none; border-radius: 20px; font-size: 16px; font-weight: 500; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  transition: transform .1s;
 }
 .shoot:active { transform: scale(0.98); }
-.shoot svg { width: 22px; height: 22px; }
+.shoot svg { width: 20px; height: 20px; }
+.shoot-alt {
+  flex: 1; padding: 18px 16px; background: var(--surface); color: var(--text);
+  border: 1px solid var(--line); border-radius: 20px; font-size: 16px; font-weight: 500; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  transition: transform .1s;
+}
+.shoot-alt:active { transform: scale(0.98); }
+.shoot-alt svg { width: 20px; height: 20px; }
+.text-input-box { display: none; margin-bottom: 16px; }
+.text-input-area {
+  width: 100%; background: var(--surface); border: 1px solid var(--line);
+  border-radius: 14px; padding: 12px 14px; color: var(--text);
+  font-size: 15px; font-family: inherit; resize: none; min-height: 80px; line-height: 1.4;
+}
+.text-input-area:focus { outline: 2px solid var(--accent); outline-offset: -1px; border-color: transparent; }
+.text-input-hint { font-size: 12px; color: var(--muted); margin: 6px 0 10px; font-style: italic; }
 input[type=file] { display: none; }
 .preview { display: none; margin-bottom: 16px; }
 .preview img { width: 100%; border-radius: 20px; display: block; aspect-ratio: 4/3; object-fit: cover; background: var(--surface-2); }
@@ -114,10 +131,16 @@ input[type=file] { display: none; }
 .items { display: none; background: var(--surface); border: 1px solid var(--line); border-radius: 20px; padding: 18px; margin-bottom: 20px; }
 .items-title { font-size: 13px; color: var(--muted); margin-bottom: 4px; }
 .items-hint { font-size: 12px; color: var(--muted); margin-bottom: 14px; font-style: italic; }
-.item { display: flex; gap: 10px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--line); }
+.item { display: flex; gap: 8px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
 .item:last-of-type { border-bottom: none; }
-.item-nome { flex: 1; background: transparent; border: none; color: var(--text); font-size: 15px; font-family: inherit; padding: 4px 0; min-width: 0; }
+.item-nome { flex: 1; background: transparent; border: none; color: var(--text); font-size: 15px; font-family: inherit; padding: 4px 0; min-width: 100px; }
 .item-nome:focus { outline: none; }
+.item-porcao {
+  width: 100px; background: var(--surface-2); border: 1px solid var(--line);
+  border-radius: 10px; padding: 5px 8px; color: var(--muted);
+  font-size: 13px; font-family: inherit;
+}
+.item-porcao:focus { outline: 2px solid var(--accent); outline-offset: -1px; color: var(--text); }
 .item-kcal-wrap { display: flex; align-items: baseline; gap: 3px; }
 .item-kcal { width: 62px; background: var(--surface-2); border: 1px solid var(--line); border-radius: 10px; padding: 6px 8px; color: var(--text); text-align: right; font-size: 15px; font-family: inherit; }
 .item-kcal:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
@@ -175,6 +198,21 @@ input[type=file] { display: none; }
 .compare-analysis p:last-child { margin-bottom: 0; }
 .privacy-note { font-size: 11px; color: var(--muted); font-style: italic; margin: 4px 0 14px; line-height: 1.5; padding: 10px 12px; background: var(--surface-2); border-radius: 10px; }
 #photoDetailImg { width: 100%; border-radius: 14px; margin-bottom: 12px; background: var(--surface-2); max-height: 60vh; object-fit: contain; }
+.evo-card { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 16px 18px; margin-bottom: 12px; }
+.evo-card-title { font-size: 13px; color: var(--muted); margin-bottom: 10px; }
+.evo-chart { width: 100%; overflow: hidden; }
+.evo-chart svg { width: 100%; display: block; }
+.evo-chart text { font-family: -apple-system, system-ui, sans-serif; }
+.evo-empty { color: var(--muted); font-size: 13px; font-style: italic; padding: 12px 0; }
+.day-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--line); }
+.day-row:last-child { border-bottom: none; }
+.day-date { font-size: 14px; }
+.day-date small { color: var(--muted); font-size: 12px; margin-left: 4px; }
+.day-kcal { font-family: "Instrument Serif", serif; font-style: italic; font-size: 18px; }
+.day-kcal.under { color: var(--accent-2); }
+.day-kcal.over { color: var(--accent); }
+.day-kcal small { font-size: 11px; color: var(--muted); font-style: normal; font-family: inherit; }
+.evo-more { background: none; border: none; color: var(--accent); font-size: 14px; font-family: inherit; cursor: pointer; padding: 10px 0 2px; width: 100%; text-align: center; }
 </style>
 </head>
 <body>
@@ -229,13 +267,30 @@ input[type=file] { display: none; }
     </button>
   </div>
 
-  <button class="shoot" onclick="tirarFoto()">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
-      <circle cx="12" cy="13" r="4"/>
-    </svg>
-    Fotografar prato
-  </button>
+  <div class="shoot-row">
+    <button class="shoot" onclick="tirarFoto()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+        <circle cx="12" cy="13" r="4"/>
+      </svg>
+      Foto
+    </button>
+    <button class="shoot-alt" onclick="abrirTexto()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+      </svg>
+      Digitar
+    </button>
+  </div>
+  <div class="text-input-box" id="textInputBox">
+    <textarea class="text-input-area" id="textInputArea" placeholder="Ex: 1 prato de arroz, feijão, bife grelhado e salada&#10;Ou: 2 fatias de pão integral com queijo branco e café com leite"></textarea>
+    <div class="text-input-hint">Descreva o que comeu com as quantidades — quanto mais detalhe, melhor a estimativa.</div>
+    <div class="actions">
+      <button class="btn btn-secondary" onclick="fecharTexto()">Cancelar</button>
+      <button class="btn btn-primary" onclick="analisarTexto()">Estimar calorias</button>
+    </div>
+  </div>
   <input type="file" id="fileInput" accept="image/*" capture="environment" onchange="analisarFoto(this.files[0])">
 
   <div id="msgBox"></div>
@@ -263,6 +318,16 @@ input[type=file] { display: none; }
     <button class="mini-btn" onclick="openCompareModal()" id="compareBtn">Comparar</button>
   </div>
   <input type="file" id="photoFileInput" accept="image/*" onchange="handleNewPhoto(this.files[0])">
+
+  <h2 class="meals-title">Evolução</h2>
+  <div class="evo-card">
+    <div class="evo-card-title">Peso ao longo do tempo</div>
+    <div class="evo-chart" id="weightChart"></div>
+  </div>
+  <div class="evo-card">
+    <div class="evo-card-title">Histórico de calorias</div>
+    <div id="daysHistory"></div>
+  </div>
 
   <div class="disclaimer">
     Estimativas por foto têm erro de 20 a 40%. Previsão de peso assume ritmo constante — na prática, o corpo humano varia.<br>
@@ -613,6 +678,8 @@ function salvarConfig() {
   setMetaManual(metaVal && metaVal > 0 ? metaVal : null);
   closeSettings();
   render();
+  renderWeightChart();
+  renderDaysHistory();
 }
 
 function openWeightModal() {
@@ -627,6 +694,8 @@ function salvarPeso() {
   logWeight(kg);
   closeWeightModal();
   render();
+  renderWeightChart();
+  renderDaysHistory();
   showToast('Peso registrado.');
 }
 
@@ -741,9 +810,9 @@ function updateItemsTotal() {
 }
 function renderItems() {
   document.getElementById('itemsList').innerHTML = itensAtuais.map((it, i) => {
-    const nome = it.porcao ? `${it.nome} (${it.porcao})` : it.nome;
     return `<div class="item">
-      <input class="item-nome" value="${escapeHtml(nome)}" onchange="itensAtuais[${i}].nome=this.value; itensAtuais[${i}].porcao='';">
+      <input class="item-nome" value="${escapeHtml(it.nome)}" onchange="itensAtuais[${i}].nome=this.value;">
+      <input class="item-porcao" value="${escapeHtml(it.porcao || '')}" placeholder="porção" onchange="itensAtuais[${i}].porcao=this.value;">
       <div class="item-kcal-wrap">
         <input class="item-kcal" type="number" inputmode="numeric" value="${parseInt(it.kcal) || 0}" oninput="itensAtuais[${i}].kcal=parseInt(this.value)||0; updateItemsTotal();">
         <span class="item-kcal-unit">kcal</span>
@@ -755,6 +824,71 @@ function renderItems() {
   }).join('');
   updateItemsTotal();
 }
+
+function abrirTexto() {
+  if (!getKey()) {
+    showError('Configure sua chave da API Gemini primeiro (engrenagem no topo).');
+    openSettings();
+    return;
+  }
+  document.getElementById('textInputBox').style.display = 'block';
+  document.getElementById('textInputArea').focus();
+}
+function fecharTexto() {
+  document.getElementById('textInputBox').style.display = 'none';
+  document.getElementById('textInputArea').value = '';
+}
+
+async function analisarTexto() {
+  const texto = document.getElementById('textInputArea').value.trim();
+  if (!texto) { showError('Descreva o que você comeu.'); return; }
+
+  document.getElementById('msgBox').innerHTML = '';
+  document.getElementById('itemsBox').style.display = 'none';
+  document.getElementById('loading').style.display = 'block';
+  document.getElementById('textInputBox').style.display = 'none';
+
+  const prompt = `O usuário descreveu o que comeu. Identifique cada alimento e estime as calorias com base na porção informada. Se a porção não foi especificada, assuma uma porção típica brasileira.
+
+Descrição do usuário: "${texto}"
+
+Retorne APENAS um JSON válido, sem markdown, sem comentários, no formato exato:
+{"itens":[{"nome":"nome do alimento em português","porcao":"porção estimada, ex: 100g, 1 unidade média, 1 concha","kcal":numero_inteiro}]}
+
+Seja realista e use valores calóricos médios de tabelas nutricionais brasileiras (TACO/IBGE). Se algo for vago, assuma a versão mais comum.`;
+
+  try {
+    const resp = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent`,
+      { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-goog-api-key': getKey() },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }],
+          generationConfig: { temperature: 0.2, responseMimeType: 'application/json' }
+        })
+      }
+    );
+    if (!resp.ok) {
+      const errTxt = await resp.text();
+      let msg = `Erro ${resp.status}`;
+      try { const j = JSON.parse(errTxt); if (j.error?.message) msg += ': ' + j.error.message; }
+      catch { msg += ': ' + errTxt.slice(0, 150); }
+      throw new Error(msg);
+    }
+    const data = await resp.json();
+    const txt = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+    let parsed;
+    try { parsed = JSON.parse(txt); } catch { throw new Error('Resposta inesperada da IA. Tente reformular.'); }
+    itensAtuais = (parsed.itens || []).filter(it => it && it.nome);
+    if (itensAtuais.length === 0) throw new Error('Nenhum alimento identificado. Tente descrever com mais detalhe.');
+    renderItems();
+    document.getElementById('itemsBox').style.display = 'block';
+  } catch (e) {
+    showError(e.message);
+    document.getElementById('textInputBox').style.display = 'block';
+  } finally {
+    document.getElementById('loading').style.display = 'none';
+  }
+}
 function cancelar() {
   itensAtuais = [];
   document.getElementById('preview').style.display = 'none';
@@ -764,7 +898,7 @@ function cancelar() {
 function salvarRefeicao() {
   if (itensAtuais.length === 0) return;
   const total = itensAtuais.reduce((s, it) => s + (parseInt(it.kcal) || 0), 0);
-  const desc = itensAtuais.map(it => it.nome).filter(Boolean).join(', ');
+  const desc = itensAtuais.map(it => it.porcao ? `${it.nome} (${it.porcao})` : it.nome).filter(Boolean).join(', ');
   const now = new Date();
   const hora = String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
   const meals = getMeals();
@@ -772,10 +906,135 @@ function salvarRefeicao() {
   saveMeals(meals);
   cancelar();
   render();
+  renderDaysHistory();
 }
 function apagarRefeicao(id) {
   saveMeals(getMeals().filter(m => m.id !== id));
   render();
+  renderDaysHistory();
+}
+
+// --- Evolution: weight chart + daily history ---
+let daysShown = 7;
+
+function renderWeightChart() {
+  const box = document.getElementById('weightChart');
+  const weights = getWeights().slice().sort((a,b) => a.date.localeCompare(b.date));
+  if (weights.length < 2) {
+    box.innerHTML = `<div class="evo-empty">Registre seu peso em pelo menos 2 dias pra ver o gráfico.</div>`;
+    return;
+  }
+  const last30 = weights.slice(-30);
+  const vals = last30.map(w => w.kg);
+  const minV = Math.min(...vals) - 0.5;
+  const maxV = Math.max(...vals) + 0.5;
+  const range = maxV - minV || 1;
+
+  const W = 500, H = 180, padL = 42, padR = 12, padT = 18, padB = 32;
+  const cW = W - padL - padR, cH = H - padT - padB;
+
+  const pts = last30.map((w, i) => {
+    const x = padL + (i / (last30.length - 1)) * cW;
+    const y = padT + (1 - (w.kg - minV) / range) * cH;
+    return { x, y, ...w };
+  });
+  const polyline = pts.map(p => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ');
+
+  const profile = getProfile();
+  const target = profile.target_kg;
+  let targetLine = '';
+  if (target && target >= minV && target <= maxV) {
+    const ty = padT + (1 - (target - minV) / range) * cH;
+    targetLine = `<line x1="${padL}" y1="${ty.toFixed(1)}" x2="${W-padR}" y2="${ty.toFixed(1)}" stroke="var(--accent-2)" stroke-width="1" stroke-dasharray="4 3" opacity="0.6"/>
+      <text x="${W-padR}" y="${ty-4}" text-anchor="end" fill="var(--accent-2)" font-size="9" opacity="0.8">meta ${target}kg</text>`;
+  }
+
+  const gridLines = [];
+  const step = range > 5 ? 2 : 1;
+  for (let v = Math.ceil(minV); v <= Math.floor(maxV); v += step) {
+    const gy = padT + (1 - (v - minV) / range) * cH;
+    gridLines.push(`<line x1="${padL}" y1="${gy.toFixed(1)}" x2="${W-padR}" y2="${gy.toFixed(1)}" stroke="var(--line)" stroke-width="0.5"/>
+      <text x="${padL-6}" y="${gy+3}" text-anchor="end" fill="var(--muted)" font-size="10">${v}</text>`);
+  }
+
+  const labelInterval = Math.max(1, Math.floor(last30.length / 5));
+  const dateLabels = pts.filter((_, i) => i === 0 || i === pts.length - 1 || i % labelInterval === 0)
+    .map(p => `<text x="${p.x.toFixed(1)}" y="${H-4}" text-anchor="middle" fill="var(--muted)" font-size="9">${p.date.slice(8)}/${p.date.slice(5,7)}</text>`)
+    .join('');
+
+  const dots = pts.map(p => `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="3" fill="var(--accent)"/>`).join('');
+
+  const first = vals[0], last = vals[vals.length - 1];
+  const diff = last - first;
+  const diffTxt = diff === 0 ? '' : `<text x="${padL}" y="${H-4}" text-anchor="start" fill="${diff < 0 ? 'var(--accent-2)' : 'var(--accent)'}" font-size="10" font-weight="500">${diff > 0 ? '+' : ''}${diff.toFixed(1)} kg</text>`;
+
+  box.innerHTML = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">
+    ${gridLines.join('')}
+    ${targetLine}
+    <polyline points="${polyline}" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    ${dots}
+    ${dateLabels}
+    ${diffTxt}
+  </svg>`;
+}
+
+function renderDaysHistory() {
+  const box = document.getElementById('daysHistory');
+  const allMeals = getMeals();
+  const profile = getProfile();
+  const health = getHealth();
+  const metaManual = getMetaManual();
+
+  // Group meals by date
+  const byDate = {};
+  allMeals.forEach(m => {
+    if (!byDate[m.data]) byDate[m.data] = [];
+    byDate[m.data].push(m);
+  });
+
+  // Also include days with weight but no meals
+  const weightDates = getWeights().map(w => w.date);
+  weightDates.forEach(d => { if (!byDate[d]) byDate[d] = []; });
+
+  const dates = Object.keys(byDate).sort().reverse();
+  if (dates.length === 0) {
+    box.innerHTML = `<div class="evo-empty">Nenhum dia registrado ainda.</div>`;
+    return;
+  }
+
+  const visible = dates.slice(0, daysShown);
+  const todayStr = hoje();
+
+  const rows = visible.map(date => {
+    const meals = byDate[date] || [];
+    const totalKcal = meals.reduce((s, m) => s + m.kcal, 0);
+    const dayHealth = health[date] || {};
+    const tdee = calcTDEE(profile, dayHealth);
+    const meta = metaManual || (tdee ? suggestMeta(profile, tdee) : 2000);
+    const isOver = totalKcal > meta;
+    const isToday = date === todayStr;
+
+    const parts = date.split('-');
+    const dateFmt = `${parts[2]}/${parts[1]}`;
+    const dayLabel = isToday ? 'Hoje' : dateFmt;
+    const nMeals = meals.length;
+    const mealsTxt = nMeals === 0 ? 'sem refeições' : `${nMeals} refeição${nMeals > 1 ? 's' : ''}`;
+
+    // Find weight for this date
+    const wEntry = getWeights().find(w => w.date === date);
+    const wTxt = wEntry ? ` · ${wEntry.kg}kg` : '';
+
+    return `<div class="day-row">
+      <div class="day-date">${dayLabel}<small>${mealsTxt}${wTxt}</small></div>
+      <div class="day-kcal ${isOver ? 'over' : 'under'}">${totalKcal}<small> / ${meta}</small></div>
+    </div>`;
+  }).join('');
+
+  const moreBtn = dates.length > daysShown
+    ? `<button class="evo-more" onclick="daysShown+=7; renderDaysHistory();">Ver mais dias</button>`
+    : '';
+
+  box.innerHTML = rows + moreBtn;
 }
 
 // --- Photos (IndexedDB) ---
@@ -1030,6 +1289,8 @@ function ingestUrlParams() {
 ingestUrlParams();
 if (!getKey()) openSettings();
 render();
+renderWeightChart();
+renderDaysHistory();
 renderPhotosStrip();
 </script>
 </body>
