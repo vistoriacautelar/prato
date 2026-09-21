@@ -1,0 +1,1036 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Prato">
+<meta name="theme-color" content="#FBF6EE" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1C1815" media="(prefers-color-scheme: dark)">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='40' fill='%23FBF6EE'/%3E%3Ccircle cx='90' cy='90' r='58' fill='none' stroke='%23C8471F' stroke-width='6'/%3E%3Ccircle cx='90' cy='90' r='40' fill='%23C8471F'/%3E%3C/svg%3E">
+<title>Prato</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #FBF6EE; --surface: #FFFFFF; --surface-2: #F4EDDF;
+  --text: #2A2420; --muted: #86786A;
+  --accent: #C8471F; --accent-2: #7A9B5C; --accent-soft: #F2D4C6;
+  --line: #E8DFD1; --danger: #A02E1A;
+  color-scheme: light dark;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #1C1815; --surface: #2A2420; --surface-2: #211C18;
+    --text: #F0E8DC; --muted: #A69A8A;
+    --accent: #E9633B; --accent-2: #A0C280; --accent-soft: #4A2B1F;
+    --line: #3A322C; --danger: #E96350;
+  }
+}
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body { margin: 0; padding: 0; background: var(--bg); color: var(--text); }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif;
+  font-size: 15px; line-height: 1.4;
+  padding-top: env(safe-area-inset-top); padding-bottom: env(safe-area-inset-bottom);
+  min-height: 100vh;
+}
+.wrap { max-width: 560px; margin: 0 auto; padding: 20px 20px 40px; }
+header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 24px; }
+.brand { font-family: "Instrument Serif", Georgia, serif; font-size: 26px; letter-spacing: 0.5px; font-style: italic; }
+.icon-btn {
+  background: none; border: none; color: var(--muted);
+  width: 40px; height: 40px; border-radius: 50%;
+  display: grid; place-items: center; cursor: pointer;
+}
+.icon-btn:active { background: var(--surface-2); }
+.icon-btn svg { width: 22px; height: 22px; }
+.hero { display: flex; align-items: baseline; gap: 12px; margin-bottom: 4px; }
+.hero-num { font-family: "Instrument Serif", Georgia, serif; font-size: 78px; line-height: 1; font-weight: 400; }
+.hero-unit { font-size: 18px; color: var(--muted); font-family: "Instrument Serif", serif; font-style: italic; }
+.hero-sub { font-size: 13px; color: var(--muted); margin-bottom: 14px; }
+.hero-sub b { color: var(--text); font-weight: 500; }
+.bar { height: 4px; background: var(--line); border-radius: 2px; overflow: hidden; margin-bottom: 20px; }
+.bar-fill { height: 100%; background: var(--accent); transition: width .4s ease; border-radius: 2px; }
+.bar-fill.over { background: var(--danger); }
+.balance {
+  background: var(--surface); border: 1px solid var(--line);
+  border-radius: 18px; padding: 16px 18px; margin-bottom: 14px;
+}
+.bal-row { display: flex; justify-content: space-between; padding: 4px 0; font-size: 14px; }
+.bal-row .lbl { color: var(--muted); }
+.bal-row .val { font-variant-numeric: tabular-nums; }
+.bal-row.deficit .val { color: var(--accent-2); font-weight: 500; }
+.bal-row.surplus .val { color: var(--accent); font-weight: 500; }
+.bal-forecast {
+  margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line);
+  font-family: "Instrument Serif", serif; font-style: italic; font-size: 18px; line-height: 1.35;
+}
+.bal-forecast .accent { color: var(--accent); }
+.bal-blocked { color: var(--muted); font-size: 13px; font-style: italic; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--line); }
+.stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+.stat { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; }
+.stat-lbl { font-size: 11px; color: var(--muted); letter-spacing: 0.3px; }
+.stat-val { font-family: "Instrument Serif", serif; font-size: 22px; font-style: italic; margin-top: 2px; line-height: 1.2; }
+.stat-val small { font-size: 12px; color: var(--muted); font-style: normal; font-family: inherit; font-weight: normal; }
+.stat-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.mini-actions { display: flex; gap: 8px; margin-bottom: 24px; }
+.mini-btn {
+  flex: 1; padding: 10px 12px; background: var(--surface-2); color: var(--text);
+  border: none; border-radius: 12px; font-size: 13px; font-family: inherit; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+}
+.mini-btn:active { opacity: 0.7; }
+.mini-btn svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.setup-prompt {
+  background: var(--accent-soft); border-radius: 14px; padding: 14px 16px;
+  margin-bottom: 20px; font-size: 14px; color: var(--text);
+  display: flex; justify-content: space-between; align-items: center; gap: 12px;
+}
+.setup-prompt button {
+  background: var(--accent); color: white; border: none;
+  padding: 8px 14px; border-radius: 10px; font-size: 13px; font-weight: 500;
+  font-family: inherit; cursor: pointer; white-space: nowrap;
+}
+.shoot {
+  width: 100%; padding: 22px 24px; background: var(--text); color: var(--bg);
+  border: none; border-radius: 20px; font-size: 17px; font-weight: 500; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 12px;
+  margin-bottom: 24px; transition: transform .1s;
+}
+.shoot:active { transform: scale(0.98); }
+.shoot svg { width: 22px; height: 22px; }
+input[type=file] { display: none; }
+.preview { display: none; margin-bottom: 16px; }
+.preview img { width: 100%; border-radius: 20px; display: block; aspect-ratio: 4/3; object-fit: cover; background: var(--surface-2); }
+.loading { display: none; text-align: center; padding: 20px; color: var(--muted); font-family: "Instrument Serif", serif; font-style: italic; font-size: 18px; }
+.loading .dots::after { content: ''; animation: dots 1.2s infinite steps(4); }
+@keyframes dots { 0%{content:''} 25%{content:'.'} 50%{content:'..'} 75%{content:'...'} }
+.error, .toast { border-radius: 14px; padding: 12px 16px; margin-bottom: 14px; font-size: 14px; line-height: 1.4; }
+.error { background: var(--accent-soft); color: var(--danger); }
+.toast { background: var(--surface); border: 1px solid var(--accent-2); color: var(--text); }
+.items { display: none; background: var(--surface); border: 1px solid var(--line); border-radius: 20px; padding: 18px; margin-bottom: 20px; }
+.items-title { font-size: 13px; color: var(--muted); margin-bottom: 4px; }
+.items-hint { font-size: 12px; color: var(--muted); margin-bottom: 14px; font-style: italic; }
+.item { display: flex; gap: 10px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--line); }
+.item:last-of-type { border-bottom: none; }
+.item-nome { flex: 1; background: transparent; border: none; color: var(--text); font-size: 15px; font-family: inherit; padding: 4px 0; min-width: 0; }
+.item-nome:focus { outline: none; }
+.item-kcal-wrap { display: flex; align-items: baseline; gap: 3px; }
+.item-kcal { width: 62px; background: var(--surface-2); border: 1px solid var(--line); border-radius: 10px; padding: 6px 8px; color: var(--text); text-align: right; font-size: 15px; font-family: inherit; }
+.item-kcal:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
+.item-kcal-unit { font-size: 11px; color: var(--muted); }
+.item-del { background: none; border: none; color: var(--muted); cursor: pointer; padding: 6px; width: 32px; height: 32px; display: grid; place-items: center; border-radius: 8px; }
+.item-del:active { background: var(--surface-2); }
+.item-del svg { width: 16px; height: 16px; }
+.items-total { display: flex; justify-content: space-between; padding: 12px 0 4px; border-top: 2px solid var(--line); margin-top: 6px; font-size: 14px; }
+.items-total b { font-weight: 500; }
+.actions { display: flex; gap: 10px; margin-top: 16px; }
+.btn { flex: 1; padding: 13px 16px; border-radius: 14px; border: none; font-size: 15px; font-weight: 500; cursor: pointer; font-family: inherit; }
+.btn-primary { background: var(--accent); color: white; }
+.btn-secondary { background: var(--surface-2); color: var(--text); }
+.btn:active { opacity: 0.8; }
+.meals-title { font-family: "Instrument Serif", serif; font-size: 22px; font-style: italic; margin: 20px 0 12px; }
+.meal { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 14px 16px; margin-bottom: 8px; display: flex; gap: 12px; align-items: center; }
+.meal-info { flex: 1; min-width: 0; }
+.meal-time { font-size: 12px; color: var(--muted); }
+.meal-desc { font-size: 14px; margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.meal-kcal { font-family: "Instrument Serif", serif; font-size: 22px; color: var(--accent); font-style: italic; }
+.meal-kcal small { font-size: 11px; color: var(--muted); font-style: normal; font-family: inherit; margin-left: 2px; }
+.meal-del { background: none; border: none; color: var(--muted); cursor: pointer; padding: 4px; width: 28px; height: 28px; display: grid; place-items: center; }
+.meal-del svg { width: 15px; height: 15px; }
+.empty { text-align: center; color: var(--muted); padding: 28px 20px; font-size: 14px; font-style: italic; border: 1px dashed var(--line); border-radius: 16px; }
+.modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 100; align-items: flex-end; justify-content: center; }
+.modal.open { display: flex; }
+.modal-content { background: var(--bg); width: 100%; max-width: 560px; border-radius: 24px 24px 0 0; padding: 24px 20px; padding-bottom: calc(24px + env(safe-area-inset-bottom)); max-height: 88vh; overflow-y: auto; }
+.modal-title { font-family: "Instrument Serif", serif; font-style: italic; font-size: 26px; margin: 0 0 6px; }
+.modal-sub { font-size: 13px; color: var(--muted); margin-bottom: 18px; }
+.field { margin-bottom: 14px; }
+.field-row { display: flex; gap: 10px; }
+.field-row .field { flex: 1; }
+.field label { display: block; font-size: 13px; color: var(--muted); margin-bottom: 6px; }
+.field input, .field select { width: 100%; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 11px 14px; color: var(--text); font-size: 16px; font-family: inherit; }
+.field input:focus, .field select:focus { outline: 2px solid var(--accent); outline-offset: -1px; border-color: transparent; }
+.field .hint { font-size: 12px; color: var(--muted); margin-top: 6px; line-height: 1.4; }
+.field .hint a { color: var(--accent); text-decoration: none; }
+.field .hint code { background: var(--surface-2); padding: 2px 5px; border-radius: 4px; font-size: 11px; word-break: break-all; }
+.section-label { font-family: "Instrument Serif", serif; font-style: italic; font-size: 18px; margin: 20px 0 10px; }
+.section-label:first-child { margin-top: 0; }
+.disclaimer { font-size: 11px; color: var(--muted); text-align: center; margin-top: 32px; padding: 0 20px; font-style: italic; line-height: 1.6; }
+.photos-strip { display: flex; gap: 8px; overflow-x: auto; padding: 4px 0 12px; -webkit-overflow-scrolling: touch; }
+.photos-strip:empty::before { content: 'Nenhuma foto ainda. Toque em "Nova foto" abaixo.'; color: var(--muted); font-size: 13px; font-style: italic; padding: 12px 0; display: block; }
+.photo-thumb { flex-shrink: 0; width: 96px; height: 128px; border-radius: 12px; overflow: hidden; position: relative; background: var(--surface-2); cursor: pointer; border: 1px solid var(--line); }
+.photo-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.photo-thumb-meta { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,.75)); color: white; font-size: 10px; padding: 14px 6px 5px; text-align: center; line-height: 1.2; }
+.photos-actions { display: flex; gap: 8px; margin: 4px 0 24px; }
+.compare-preview { display: flex; gap: 8px; margin: 14px 0; }
+.compare-preview-col { flex: 1; }
+.compare-preview img { width: 100%; border-radius: 12px; aspect-ratio: 3/4; object-fit: cover; background: var(--surface-2); display: block; }
+.compare-preview-lbl { font-size: 11px; color: var(--muted); margin-top: 4px; text-align: center; line-height: 1.3; }
+.compare-analysis { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; margin-bottom: 12px; font-size: 14px; line-height: 1.55; display: none; }
+.compare-analysis.show { display: block; }
+.compare-analysis p { margin: 0 0 10px; }
+.compare-analysis p:last-child { margin-bottom: 0; }
+.privacy-note { font-size: 11px; color: var(--muted); font-style: italic; margin: 4px 0 14px; line-height: 1.5; padding: 10px 12px; background: var(--surface-2); border-radius: 10px; }
+#photoDetailImg { width: 100%; border-radius: 14px; margin-bottom: 12px; background: var(--surface-2); max-height: 60vh; object-fit: contain; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand">Prato</div>
+    <button class="icon-btn" onclick="openSettings()" aria-label="Configurações">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="3"/>
+        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+      </svg>
+    </button>
+  </header>
+
+  <div class="hero">
+    <span class="hero-num" id="totalHoje">0</span>
+    <span class="hero-unit">kcal hoje</span>
+  </div>
+  <div class="hero-sub">Meta <b id="metaTxt">2000</b> · Restam <b id="faltam">2000</b></div>
+  <div class="bar"><div class="bar-fill" id="barFill" style="width:0%"></div></div>
+
+  <div id="setupPrompt"></div>
+
+  <div class="balance" id="balanceCard" style="display:none">
+    <div class="bal-row"><span class="lbl">Consumido</span><span class="val" id="balIntake">0 kcal</span></div>
+    <div class="bal-row"><span class="lbl">Gasto estimado (TDEE)</span><span class="val" id="balTdee">— kcal</span></div>
+    <div class="bal-row" id="balDiffRow"><span class="lbl" id="balDiffLbl">Balanço</span><span class="val" id="balDiff">—</span></div>
+    <div id="balForecastBox"></div>
+  </div>
+
+  <div class="stats" id="statsGrid" style="display:none">
+    <div class="stat">
+      <div class="stat-lbl">PESO</div>
+      <div class="stat-val" id="statPeso">—</div>
+      <div class="stat-sub" id="statImc">—</div>
+    </div>
+    <div class="stat">
+      <div class="stat-lbl">SAÚDE HOJE</div>
+      <div class="stat-val" id="statPassos">—</div>
+      <div class="stat-sub" id="statAtivas">—</div>
+    </div>
+  </div>
+
+  <div class="mini-actions">
+    <button class="mini-btn" onclick="openWeightModal()">
+      <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M8 12h.01M12 12h.01M16 12h.01"/></svg>
+      Registrar peso
+    </button>
+    <button class="mini-btn" onclick="openHealthModal()">
+      <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      Sincronizar Saúde
+    </button>
+  </div>
+
+  <button class="shoot" onclick="tirarFoto()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+      <circle cx="12" cy="13" r="4"/>
+    </svg>
+    Fotografar prato
+  </button>
+  <input type="file" id="fileInput" accept="image/*" capture="environment" onchange="analisarFoto(this.files[0])">
+
+  <div id="msgBox"></div>
+  <div class="preview" id="preview"><img id="previewImg" alt=""></div>
+  <div id="loading" class="loading">Analisando<span class="dots"></span></div>
+
+  <div class="items" id="itemsBox">
+    <div class="items-title">O que a IA identificou</div>
+    <div class="items-hint">Ajuste os valores antes de salvar — estimativa visual tem margem de erro.</div>
+    <div id="itemsList"></div>
+    <div class="items-total"><span>Total</span><b><span id="itemsTotal">0</span> kcal</b></div>
+    <div class="actions">
+      <button class="btn btn-secondary" onclick="cancelar()">Cancelar</button>
+      <button class="btn btn-primary" onclick="salvarRefeicao()">Salvar</button>
+    </div>
+  </div>
+
+  <h2 class="meals-title">Refeições de hoje</h2>
+  <div id="mealsList"></div>
+
+  <h2 class="meals-title">Fotos de evolução</h2>
+  <div class="photos-strip" id="photosStrip"></div>
+  <div class="photos-actions">
+    <button class="mini-btn" onclick="document.getElementById('photoFileInput').click()">+ Nova foto</button>
+    <button class="mini-btn" onclick="openCompareModal()" id="compareBtn">Comparar</button>
+  </div>
+  <input type="file" id="photoFileInput" accept="image/*" onchange="handleNewPhoto(this.files[0])">
+
+  <div class="disclaimer">
+    Estimativas por foto têm erro de 20 a 40%. Previsão de peso assume ritmo constante — na prática, o corpo humano varia.<br>
+    IMC não distingue músculo de gordura. Nada aqui substitui acompanhamento profissional.
+  </div>
+</div>
+
+<div class="modal" id="settingsModal">
+  <div class="modal-content">
+    <h2 class="modal-title">Configurações</h2>
+    <div class="modal-sub">Tudo fica salvo só neste aparelho.</div>
+    <div class="section-label">API</div>
+    <div class="field">
+      <label for="apiKeyInput">Chave Gemini</label>
+      <input type="password" id="apiKeyInput" placeholder="AIza..." autocomplete="off">
+      <div class="hint">Grátis em <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a></div>
+    </div>
+    <div class="section-label">Perfil</div>
+    <div class="field-row">
+      <div class="field">
+        <label for="sexInput">Sexo biológico</label>
+        <select id="sexInput"><option value="">—</option><option value="F">Feminino</option><option value="M">Masculino</option></select>
+      </div>
+      <div class="field">
+        <label for="ageInput">Idade</label>
+        <input type="number" id="ageInput" min="10" max="120" inputmode="numeric">
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label for="heightInput">Altura (cm)</label>
+        <input type="number" id="heightInput" min="100" max="230" inputmode="numeric">
+      </div>
+      <div class="field">
+        <label for="weightInput">Peso atual (kg)</label>
+        <input type="number" id="weightInput" min="20" max="300" step="0.1" inputmode="decimal">
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label for="targetInput">Peso alvo (kg)</label>
+        <input type="number" id="targetInput" min="20" max="300" step="0.1" inputmode="decimal">
+      </div>
+      <div class="field">
+        <label for="activityInput">Atividade base</label>
+        <select id="activityInput">
+          <option value="sedentary">Sedentária</option>
+          <option value="light" selected>Leve</option>
+          <option value="moderate">Moderada</option>
+          <option value="active">Ativa</option>
+          <option value="very_active">Muito ativa</option>
+        </select>
+      </div>
+    </div>
+    <div class="field">
+      <label for="metaInput">Meta diária de calorias (opcional)</label>
+      <input type="number" id="metaInput" min="800" max="5000" step="50" inputmode="numeric">
+      <div class="hint">Em branco = app sugere com base no seu TDEE menos ~500 kcal (ritmo saudável de ~0,5 kg/semana).</div>
+    </div>
+    <div class="actions">
+      <button class="btn btn-secondary" onclick="closeSettings()">Cancelar</button>
+      <button class="btn btn-primary" onclick="salvarConfig()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="weightModal">
+  <div class="modal-content">
+    <h2 class="modal-title">Registrar peso</h2>
+    <div class="modal-sub">Atualiza seu peso atual e o histórico.</div>
+    <div class="field">
+      <label for="wLogInput">Peso hoje (kg)</label>
+      <input type="number" id="wLogInput" min="20" max="300" step="0.1" inputmode="decimal">
+    </div>
+    <div class="actions">
+      <button class="btn btn-secondary" onclick="closeWeightModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="salvarPeso()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="photoDetailModal">
+  <div class="modal-content">
+    <h2 class="modal-title">Foto</h2>
+    <div class="modal-sub" id="photoDetailMeta">—</div>
+    <img id="photoDetailImg" alt="">
+    <div class="actions">
+      <button class="btn btn-secondary" onclick="deleteCurrentPhoto()">Apagar</button>
+      <button class="btn btn-primary" onclick="closePhotoDetail()">Fechar</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="compareModal">
+  <div class="modal-content">
+    <h2 class="modal-title">Comparar evolução</h2>
+    <div class="modal-sub">Escolha duas datas.</div>
+    <div class="field-row">
+      <div class="field">
+        <label for="photoASelect">Antes</label>
+        <select id="photoASelect" onchange="updateComparePreview()"></select>
+      </div>
+      <div class="field">
+        <label for="photoBSelect">Depois</label>
+        <select id="photoBSelect" onchange="updateComparePreview()"></select>
+      </div>
+    </div>
+    <div class="compare-preview" id="comparePreview"></div>
+    <div class="privacy-note">
+      Ao apertar "Analisar", as fotos vão pro Gemini do Google. No tier gratuito, o Google pode usar imagens pra treinar modelos deles. Se preferir, só compare visualmente sem analisar.
+    </div>
+    <div class="compare-analysis" id="compareAnalysis"></div>
+    <div class="actions">
+      <button class="btn btn-secondary" onclick="closeCompareModal()">Fechar</button>
+      <button class="btn btn-primary" onclick="runCompareAnalysis()" id="analyzeBtn">Analisar com IA</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="healthModal">
+  <div class="modal-content">
+    <h2 class="modal-title">Sincronizar Saúde</h2>
+    <div class="modal-sub">Duas formas: Atalho iOS (automatiza) ou digitar.</div>
+    <div class="section-label">Digitar manualmente</div>
+    <div class="field-row">
+      <div class="field">
+        <label for="stepsInput">Passos hoje</label>
+        <input type="number" id="stepsInput" min="0" max="100000" inputmode="numeric">
+      </div>
+      <div class="field">
+        <label for="activeKcalInput">kcal ativas</label>
+        <input type="number" id="activeKcalInput" min="0" max="5000" inputmode="numeric">
+      </div>
+    </div>
+    <div class="section-label">Via Atalho iOS</div>
+    <div class="hint" style="font-size:13px; line-height:1.5; color:var(--text)">
+      No app <b>Atalhos</b> do iPhone, crie um Atalho que leia Passos e Energia Ativa do Saúde e abra este URL substituindo os valores:<br>
+      <code id="autoUrl" style="display:block; padding:8px; word-break:break-all; margin:8px 0">carregando…</code>
+      Passo a passo completo eu te passei na conversa.
+    </div>
+    <div class="actions">
+      <button class="btn btn-secondary" onclick="closeHealthModal()">Fechar</button>
+      <button class="btn btn-primary" onclick="salvarHealth()">Salvar entrada manual</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const STORAGE = {
+  key: 'prato_apikey', meta: 'prato_meta', meals: 'prato_meals',
+  profile: 'prato_profile', weights: 'prato_weights', health: 'prato_health'
+};
+let itensAtuais = [];
+
+function jload(k, def) { try { return JSON.parse(localStorage.getItem(k) || def); } catch { return JSON.parse(def); } }
+function jsave(k, v) { localStorage.setItem(k, JSON.stringify(v)); }
+function getMeals() { return jload(STORAGE.meals, '[]'); }
+function saveMeals(m) { jsave(STORAGE.meals, m); }
+function getProfile() { return jload(STORAGE.profile, '{}'); }
+function saveProfile(p) { jsave(STORAGE.profile, p); }
+function getWeights() { return jload(STORAGE.weights, '[]'); }
+function saveWeights(w) { jsave(STORAGE.weights, w); }
+function getHealth() { return jload(STORAGE.health, '{}'); }
+function saveHealth(h) { jsave(STORAGE.health, h); }
+function getKey() { return localStorage.getItem(STORAGE.key) || ''; }
+function getMetaManual() { const v = localStorage.getItem(STORAGE.meta); return v ? parseInt(v) : null; }
+function setMetaManual(v) { if (v) localStorage.setItem(STORAGE.meta, String(v)); else localStorage.removeItem(STORAGE.meta); }
+function hoje() {
+  const d = new Date();
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
+function escapeHtml(s) { return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function getHealthToday() { return getHealth()[hoje()] || {}; }
+function saveHealthDay(data) {
+  const h = getHealth();
+  h[hoje()] = { ...(h[hoje()] || {}), ...data };
+  saveHealth(h);
+}
+function logWeight(kg) {
+  const weights = getWeights();
+  const t = hoje();
+  const idx = weights.findIndex(w => w.date === t);
+  if (idx >= 0) weights[idx].kg = kg;
+  else weights.unshift({ date: t, kg });
+  saveWeights(weights);
+  const p = getProfile();
+  p.weight_kg = kg;
+  saveProfile(p);
+}
+
+function calcBMR(p) {
+  if (!p.weight_kg || !p.height_cm || !p.age || !p.sex) return null;
+  const b = 10 * p.weight_kg + 6.25 * p.height_cm - 5 * p.age;
+  return p.sex === 'M' ? b + 5 : b - 161;
+}
+function calcTDEE(p, health) {
+  const bmr = calcBMR(p);
+  if (!bmr) return null;
+  const active = health?.active_kcal;
+  if (active && active > 0) return Math.round(bmr * 1.2 + active);
+  const mult = { sedentary: 1.2, light: 1.375, moderate: 1.55, active: 1.725, very_active: 1.9 };
+  return Math.round(bmr * (mult[p.activity] || 1.375));
+}
+function calcBMI(p) {
+  if (!p.weight_kg || !p.height_cm) return null;
+  const h = p.height_cm / 100;
+  return p.weight_kg / (h * h);
+}
+function bmiLabel(b) {
+  if (b < 18.5) return 'abaixo do peso';
+  if (b < 25) return 'saudável';
+  if (b < 30) return 'sobrepeso';
+  if (b < 35) return 'obesidade I';
+  if (b < 40) return 'obesidade II';
+  return 'obesidade III';
+}
+function suggestMeta(p, tdee) {
+  if (!tdee || !p.weight_kg || !p.target_kg) return tdee || 2000;
+  const diff = p.weight_kg - p.target_kg;
+  if (Math.abs(diff) < 0.5) return tdee;
+  const floor = p.sex === 'M' ? 1500 : 1200;
+  const raw = diff > 0 ? tdee - 500 : tdee + 300;
+  return Math.max(floor, raw);
+}
+function estimateToTarget(p, intake, tdee) {
+  if (!p.weight_kg || !p.target_kg || !tdee) return null;
+  const diff = p.weight_kg - p.target_kg;
+  if (Math.abs(diff) < 0.1) return { done: true };
+  const wantsLoss = diff > 0;
+  const balance = tdee - intake;
+  if (wantsLoss && balance <= 0) return { blocked: 'Sem déficit hoje — nesse ritmo, não há perda projetada.' };
+  if (!wantsLoss && balance >= 0) return { blocked: 'Sem superávit hoje — nesse ritmo, não há ganho projetado.' };
+  const kcalTotal = Math.abs(diff) * 7700;
+  const days = kcalTotal / Math.abs(balance);
+  return { days, kg: Math.abs(diff), direction: wantsLoss ? 'lose' : 'gain' };
+}
+function formatDays(d) {
+  d = Math.round(d);
+  if (d < 1) return 'menos de um dia';
+  if (d < 14) return `${d} dias`;
+  if (d < 60) return `${Math.round(d/7)} semanas`;
+  if (d < 365) return `${Math.round(d/30)} meses`;
+  const y = d / 365;
+  return y < 2 ? `${y.toFixed(1)} anos` : `${Math.round(y)} anos`;
+}
+
+function render() {
+  const meals = getMeals().filter(m => m.data === hoje());
+  const totalIntake = meals.reduce((s, m) => s + m.kcal, 0);
+  const profile = getProfile();
+  const health = getHealthToday();
+  const tdee = calcTDEE(profile, health);
+  const metaManual = getMetaManual();
+  const meta = metaManual || (tdee ? suggestMeta(profile, tdee) : 2000);
+
+  document.getElementById('totalHoje').textContent = totalIntake;
+  document.getElementById('metaTxt').textContent = meta;
+  document.getElementById('faltam').textContent = Math.max(0, meta - totalIntake);
+  const pct = Math.min(100, (totalIntake / meta) * 100);
+  const fill = document.getElementById('barFill');
+  fill.style.width = pct + '%';
+  fill.classList.toggle('over', totalIntake > meta);
+
+  const setupBox = document.getElementById('setupPrompt');
+  const profileComplete = profile.sex && profile.age && profile.height_cm && profile.weight_kg;
+  if (!profileComplete) {
+    setupBox.innerHTML = `<div class="setup-prompt"><span>Complete seu perfil pra ver balanço, IMC e previsão de peso.</span><button onclick="openSettings()">Configurar</button></div>`;
+  } else {
+    setupBox.innerHTML = '';
+  }
+
+  const balCard = document.getElementById('balanceCard');
+  if (profileComplete && tdee) {
+    balCard.style.display = 'block';
+    document.getElementById('balIntake').textContent = totalIntake + ' kcal';
+    document.getElementById('balTdee').textContent = tdee + ' kcal';
+    const bal = tdee - totalIntake;
+    const diffRow = document.getElementById('balDiffRow');
+    diffRow.className = 'bal-row ' + (bal > 0 ? 'deficit' : bal < 0 ? 'surplus' : '');
+    document.getElementById('balDiffLbl').textContent = bal > 0 ? 'Déficit' : bal < 0 ? 'Superávit' : 'Balanço';
+    document.getElementById('balDiff').textContent = (bal > 0 ? '−' : bal < 0 ? '+' : '') + Math.abs(bal) + ' kcal';
+    const est = estimateToTarget(profile, totalIntake, tdee);
+    const fbox = document.getElementById('balForecastBox');
+    if (!est) fbox.innerHTML = '';
+    else if (est.done) fbox.innerHTML = `<div class="bal-forecast">Você já está no peso alvo.</div>`;
+    else if (est.blocked) fbox.innerHTML = `<div class="bal-blocked">${escapeHtml(est.blocked)}</div>`;
+    else {
+      const verb = est.direction === 'lose' ? 'perder' : 'ganhar';
+      fbox.innerHTML = `<div class="bal-forecast">Nesse ritmo, <span class="accent">${verb} ${est.kg.toFixed(1)} kg</span> em <span class="accent">${formatDays(est.days)}</span>.</div>`;
+    }
+  } else {
+    balCard.style.display = 'none';
+  }
+
+  const statsGrid = document.getElementById('statsGrid');
+  if (profileComplete) {
+    statsGrid.style.display = 'grid';
+    document.getElementById('statPeso').innerHTML = `${profile.weight_kg} <small>kg</small>`;
+    const bmi = calcBMI(profile);
+    if (bmi) document.getElementById('statImc').textContent = `IMC ${bmi.toFixed(1)} · ${bmiLabel(bmi)}`;
+    const steps = health.steps, active = health.active_kcal;
+    if (steps || active) {
+      document.getElementById('statPassos').innerHTML = steps ? `${steps.toLocaleString('pt-BR')} <small>passos</small>` : '—';
+      document.getElementById('statAtivas').textContent = active ? `${active} kcal ativas` : 'sem kcal ativas';
+    } else {
+      document.getElementById('statPassos').innerHTML = `— <small>sem dados</small>`;
+      document.getElementById('statAtivas').textContent = 'toque em Sincronizar Saúde';
+    }
+  } else {
+    statsGrid.style.display = 'none';
+  }
+
+  const list = document.getElementById('mealsList');
+  if (meals.length === 0) {
+    list.innerHTML = '<div class="empty">Nada registrado ainda hoje.</div>';
+  } else {
+    list.innerHTML = meals.map(m => `<div class="meal"><div class="meal-info"><div class="meal-time">${escapeHtml(m.hora)}</div><div class="meal-desc">${escapeHtml(m.desc)}</div></div><div class="meal-kcal">${m.kcal}<small>kcal</small></div><button class="meal-del" onclick="apagarRefeicao('${m.id}')" aria-label="Apagar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg></button></div>`).join('');
+  }
+}
+
+function openSettings() {
+  const p = getProfile();
+  document.getElementById('apiKeyInput').value = getKey();
+  document.getElementById('sexInput').value = p.sex || '';
+  document.getElementById('ageInput').value = p.age || '';
+  document.getElementById('heightInput').value = p.height_cm || '';
+  document.getElementById('weightInput').value = p.weight_kg || '';
+  document.getElementById('targetInput').value = p.target_kg || '';
+  document.getElementById('activityInput').value = p.activity || 'light';
+  document.getElementById('metaInput').value = getMetaManual() || '';
+  document.getElementById('settingsModal').classList.add('open');
+}
+function closeSettings() { document.getElementById('settingsModal').classList.remove('open'); }
+function salvarConfig() {
+  const key = document.getElementById('apiKeyInput').value.trim();
+  const profile = {
+    sex: document.getElementById('sexInput').value || null,
+    age: parseInt(document.getElementById('ageInput').value) || null,
+    height_cm: parseFloat(document.getElementById('heightInput').value) || null,
+    weight_kg: parseFloat(document.getElementById('weightInput').value) || null,
+    target_kg: parseFloat(document.getElementById('targetInput').value) || null,
+    activity: document.getElementById('activityInput').value || 'light'
+  };
+  localStorage.setItem(STORAGE.key, key);
+  saveProfile(profile);
+  if (profile.weight_kg) logWeight(profile.weight_kg);
+  const metaVal = parseInt(document.getElementById('metaInput').value);
+  setMetaManual(metaVal && metaVal > 0 ? metaVal : null);
+  closeSettings();
+  render();
+}
+
+function openWeightModal() {
+  const p = getProfile();
+  document.getElementById('wLogInput').value = p.weight_kg || '';
+  document.getElementById('weightModal').classList.add('open');
+}
+function closeWeightModal() { document.getElementById('weightModal').classList.remove('open'); }
+function salvarPeso() {
+  const kg = parseFloat(document.getElementById('wLogInput').value);
+  if (!kg || kg < 20 || kg > 300) { showError('Peso inválido.'); return; }
+  logWeight(kg);
+  closeWeightModal();
+  render();
+  showToast('Peso registrado.');
+}
+
+function openHealthModal() {
+  const h = getHealthToday();
+  document.getElementById('stepsInput').value = h.steps || '';
+  document.getElementById('activeKcalInput').value = h.active_kcal || '';
+  const url = window.location.origin + window.location.pathname + '?steps={PASSOS}&active_kcal={KCAL_ATIVAS}';
+  document.getElementById('autoUrl').textContent = url;
+  document.getElementById('healthModal').classList.add('open');
+}
+function closeHealthModal() { document.getElementById('healthModal').classList.remove('open'); }
+function salvarHealth() {
+  const steps = parseInt(document.getElementById('stepsInput').value);
+  const active = parseInt(document.getElementById('activeKcalInput').value);
+  const data = {};
+  if (!isNaN(steps) && steps >= 0) data.steps = steps;
+  if (!isNaN(active) && active >= 0) data.active_kcal = active;
+  if (Object.keys(data).length) saveHealthDay(data);
+  closeHealthModal();
+  render();
+  showToast('Saúde atualizada.');
+}
+
+function tirarFoto() {
+  if (!getKey()) {
+    showError('Configure sua chave da API Gemini primeiro (engrenagem no topo).');
+    openSettings();
+    return;
+  }
+  document.getElementById('fileInput').click();
+}
+function showError(msg) {
+  document.getElementById('msgBox').innerHTML = `<div class="error">${escapeHtml(msg)}</div>`;
+  setTimeout(() => { document.getElementById('msgBox').innerHTML = ''; }, 7000);
+}
+function showToast(msg) {
+  document.getElementById('msgBox').innerHTML = `<div class="toast">${escapeHtml(msg)}</div>`;
+  setTimeout(() => { document.getElementById('msgBox').innerHTML = ''; }, 3500);
+}
+async function comprimir(file, maxDim) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error('Falha ao ler arquivo'));
+    reader.onload = e => {
+      const img = new Image();
+      img.onerror = () => reject(new Error('Imagem inválida'));
+      img.onload = () => {
+        const scale = Math.min(1, maxDim / Math.max(img.width, img.height));
+        const w = Math.round(img.width * scale);
+        const h = Math.round(img.height * scale);
+        const canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        resolve(canvas.toDataURL('image/jpeg', 0.82));
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+async function analisarFoto(file) {
+  if (!file) return;
+  document.getElementById('msgBox').innerHTML = '';
+  document.getElementById('itemsBox').style.display = 'none';
+  let compressed;
+  try { compressed = await comprimir(file, 900); }
+  catch { showError('Não foi possível ler a foto.'); return; }
+  document.getElementById('previewImg').src = compressed;
+  document.getElementById('preview').style.display = 'block';
+  document.getElementById('loading').style.display = 'block';
+  const b64 = compressed.split(',')[1];
+  const prompt = `Analise a foto do prato de comida. Identifique cada alimento visível e estime as calorias considerando a porção que aparece na imagem.
+
+Retorne APENAS um JSON válido, sem markdown, sem comentários, no formato exato:
+{"itens":[{"nome":"nome do alimento em português","porcao":"porção estimada, ex: 100g, 1 unidade média, 1 concha","kcal":numero_inteiro}]}
+
+Seja realista. Considere apenas o que está visível. Se não conseguir identificar nada, retorne {"itens":[]}.`;
+  try {
+    const resp = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key=${encodeURIComponent(getKey())}`,
+      { method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }, { inline_data: { mime_type: 'image/jpeg', data: b64 } }] }],
+          generationConfig: { temperature: 0.2, responseMimeType: 'application/json' }
+        })
+      }
+    );
+    if (!resp.ok) {
+      const errTxt = await resp.text();
+      let msg = `Erro ${resp.status}`;
+      try { const j = JSON.parse(errTxt); if (j.error?.message) msg += ': ' + j.error.message; }
+      catch { msg += ': ' + errTxt.slice(0, 150); }
+      throw new Error(msg);
+    }
+    const data = await resp.json();
+    const txt = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+    let parsed;
+    try { parsed = JSON.parse(txt); } catch { throw new Error('Resposta inesperada da IA. Tente outra foto.'); }
+    itensAtuais = (parsed.itens || []).filter(it => it && it.nome);
+    if (itensAtuais.length === 0) throw new Error('Nenhum alimento identificado. Tente uma foto mais clara.');
+    renderItems();
+    document.getElementById('itemsBox').style.display = 'block';
+  } catch (e) {
+    showError(e.message); cancelar();
+  } finally {
+    document.getElementById('loading').style.display = 'none';
+  }
+}
+function updateItemsTotal() {
+  document.getElementById('itemsTotal').textContent = itensAtuais.reduce((s, it) => s + (parseInt(it.kcal) || 0), 0);
+}
+function renderItems() {
+  document.getElementById('itemsList').innerHTML = itensAtuais.map((it, i) => {
+    const nome = it.porcao ? `${it.nome} (${it.porcao})` : it.nome;
+    return `<div class="item">
+      <input class="item-nome" value="${escapeHtml(nome)}" onchange="itensAtuais[${i}].nome=this.value; itensAtuais[${i}].porcao='';">
+      <div class="item-kcal-wrap">
+        <input class="item-kcal" type="number" inputmode="numeric" value="${parseInt(it.kcal) || 0}" oninput="itensAtuais[${i}].kcal=parseInt(this.value)||0; updateItemsTotal();">
+        <span class="item-kcal-unit">kcal</span>
+      </div>
+      <button class="item-del" onclick="itensAtuais.splice(${i},1); renderItems();" aria-label="Remover">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>`;
+  }).join('');
+  updateItemsTotal();
+}
+function cancelar() {
+  itensAtuais = [];
+  document.getElementById('preview').style.display = 'none';
+  document.getElementById('itemsBox').style.display = 'none';
+  document.getElementById('fileInput').value = '';
+}
+function salvarRefeicao() {
+  if (itensAtuais.length === 0) return;
+  const total = itensAtuais.reduce((s, it) => s + (parseInt(it.kcal) || 0), 0);
+  const desc = itensAtuais.map(it => it.nome).filter(Boolean).join(', ');
+  const now = new Date();
+  const hora = String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
+  const meals = getMeals();
+  meals.unshift({ id: Date.now().toString(36), data: hoje(), hora, desc, kcal: total });
+  saveMeals(meals);
+  cancelar();
+  render();
+}
+function apagarRefeicao(id) {
+  saveMeals(getMeals().filter(m => m.id !== id));
+  render();
+}
+
+// --- Photos (IndexedDB) ---
+const DB_NAME = 'prato_photos_db';
+const PHOTO_STORE = 'photos';
+let currentPhotoId = null;
+
+function openDB() {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(DB_NAME, 1);
+    req.onerror = () => reject(req.error);
+    req.onsuccess = () => resolve(req.result);
+    req.onupgradeneeded = () => {
+      const db = req.result;
+      if (!db.objectStoreNames.contains(PHOTO_STORE)) {
+        db.createObjectStore(PHOTO_STORE, { keyPath: 'id' });
+      }
+    };
+  });
+}
+
+async function addPhotoRecord(dataUrl, weight) {
+  const db = await openDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(PHOTO_STORE, 'readwrite');
+    const rec = { id: Date.now().toString(36), date: hoje(), timestamp: Date.now(), dataUrl, weight_kg: weight || null };
+    const req = tx.objectStore(PHOTO_STORE).add(rec);
+    req.onsuccess = () => resolve(rec);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+async function getAllPhotos() {
+  const db = await openDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(PHOTO_STORE, 'readonly');
+    const req = tx.objectStore(PHOTO_STORE).getAll();
+    req.onsuccess = () => resolve((req.result || []).sort((a,b) => a.timestamp - b.timestamp));
+    req.onerror = () => reject(req.error);
+  });
+}
+
+async function deletePhotoRecord(id) {
+  const db = await openDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(PHOTO_STORE, 'readwrite');
+    const req = tx.objectStore(PHOTO_STORE).delete(id);
+    req.onsuccess = () => resolve();
+    req.onerror = () => reject(req.error);
+  });
+}
+
+async function renderPhotosStrip() {
+  const strip = document.getElementById('photosStrip');
+  const compareBtn = document.getElementById('compareBtn');
+  try {
+    const photos = await getAllPhotos();
+    if (photos.length === 0) {
+      strip.innerHTML = '';
+      compareBtn.disabled = true;
+      compareBtn.style.opacity = 0.4;
+      return;
+    }
+    compareBtn.disabled = photos.length < 2;
+    compareBtn.style.opacity = photos.length < 2 ? 0.4 : 1;
+    // Newest first for visual
+    const reversed = [...photos].reverse();
+    strip.innerHTML = reversed.map(p => {
+      const dateFmt = p.date.split('-').reverse().slice(0,2).join('/');
+      const meta = p.weight_kg ? `${dateFmt} · ${p.weight_kg}kg` : dateFmt;
+      return `<div class="photo-thumb" onclick="openPhotoDetail('${p.id}')">
+        <img src="${p.dataUrl}" alt="">
+        <div class="photo-thumb-meta">${meta}</div>
+      </div>`;
+    }).join('');
+  } catch (e) {
+    strip.innerHTML = '<div style="color:var(--muted);font-size:12px;padding:8px 0">Erro ao carregar fotos.</div>';
+  }
+}
+
+async function handleNewPhoto(file) {
+  if (!file) return;
+  try {
+    const compressed = await comprimir(file, 900);
+    const profile = getProfile();
+    await addPhotoRecord(compressed, profile.weight_kg || null);
+    document.getElementById('photoFileInput').value = '';
+    await renderPhotosStrip();
+    showToast('Foto salva.');
+  } catch (e) {
+    showError('Falha ao salvar foto: ' + e.message);
+  }
+}
+
+async function openPhotoDetail(id) {
+  const photos = await getAllPhotos();
+  const p = photos.find(x => x.id === id);
+  if (!p) return;
+  currentPhotoId = id;
+  document.getElementById('photoDetailImg').src = p.dataUrl;
+  const dateFmt = p.date.split('-').reverse().join('/');
+  document.getElementById('photoDetailMeta').textContent = p.weight_kg ? `${dateFmt} · ${p.weight_kg} kg` : dateFmt;
+  document.getElementById('photoDetailModal').classList.add('open');
+}
+function closePhotoDetail() {
+  document.getElementById('photoDetailModal').classList.remove('open');
+  currentPhotoId = null;
+}
+async function deleteCurrentPhoto() {
+  if (!currentPhotoId) return;
+  if (!confirm('Apagar esta foto?')) return;
+  await deletePhotoRecord(currentPhotoId);
+  closePhotoDetail();
+  await renderPhotosStrip();
+  showToast('Foto apagada.');
+}
+
+async function openCompareModal() {
+  const photos = await getAllPhotos();
+  if (photos.length < 2) return;
+  const opts = photos.map(p => {
+    const dateFmt = p.date.split('-').reverse().join('/');
+    const lbl = p.weight_kg ? `${dateFmt} — ${p.weight_kg}kg` : dateFmt;
+    return `<option value="${p.id}">${lbl}</option>`;
+  }).join('');
+  const selA = document.getElementById('photoASelect');
+  const selB = document.getElementById('photoBSelect');
+  selA.innerHTML = opts;
+  selB.innerHTML = opts;
+  selA.value = photos[0].id;
+  selB.value = photos[photos.length - 1].id;
+  document.getElementById('compareAnalysis').classList.remove('show');
+  document.getElementById('compareAnalysis').innerHTML = '';
+  document.getElementById('analyzeBtn').disabled = false;
+  document.getElementById('analyzeBtn').textContent = 'Analisar com IA';
+  await updateComparePreview();
+  document.getElementById('compareModal').classList.add('open');
+}
+function closeCompareModal() { document.getElementById('compareModal').classList.remove('open'); }
+
+async function updateComparePreview() {
+  const photos = await getAllPhotos();
+  const idA = document.getElementById('photoASelect').value;
+  const idB = document.getElementById('photoBSelect').value;
+  const a = photos.find(p => p.id === idA);
+  const b = photos.find(p => p.id === idB);
+  if (!a || !b) return;
+  const fmt = (p) => {
+    const d = p.date.split('-').reverse().join('/');
+    return p.weight_kg ? `${d} · ${p.weight_kg}kg` : d;
+  };
+  document.getElementById('comparePreview').innerHTML = `
+    <div class="compare-preview-col"><img src="${a.dataUrl}" alt=""><div class="compare-preview-lbl">${fmt(a)}</div></div>
+    <div class="compare-preview-col"><img src="${b.dataUrl}" alt=""><div class="compare-preview-lbl">${fmt(b)}</div></div>
+  `;
+}
+
+async function runCompareAnalysis() {
+  if (!getKey()) { showError('Configure a chave Gemini primeiro.'); return; }
+  const photos = await getAllPhotos();
+  const idA = document.getElementById('photoASelect').value;
+  const idB = document.getElementById('photoBSelect').value;
+  const a = photos.find(p => p.id === idA);
+  const b = photos.find(p => p.id === idB);
+  if (!a || !b || a.id === b.id) { showError('Escolha duas fotos diferentes.'); return; }
+
+  const btn = document.getElementById('analyzeBtn');
+  btn.disabled = true;
+  btn.textContent = 'Analisando…';
+  const analysisBox = document.getElementById('compareAnalysis');
+  analysisBox.classList.remove('show');
+  analysisBox.innerHTML = '';
+
+  const daysBetween = Math.round((b.timestamp - a.timestamp) / 86400000);
+  const weightDiff = (a.weight_kg && b.weight_kg) ? (b.weight_kg - a.weight_kg).toFixed(1) : null;
+
+  const prompt = `Você está analisando duas fotos de progresso pessoal da mesma pessoa, tiradas em datas diferentes. Seu papel é fornecer observações OBJETIVAS e NEUTRAS do que é visível.
+
+Foto A: ${a.date}${a.weight_kg ? `, peso registrado ${a.weight_kg} kg` : ''}
+Foto B: ${b.date}${b.weight_kg ? `, peso registrado ${b.weight_kg} kg` : ''}
+Intervalo: ${daysBetween} dias
+${weightDiff !== null ? `Diferença de peso registrada: ${weightDiff} kg` : ''}
+
+Descreva:
+1. Diferenças visíveis de composição corporal (silhueta, contornos)
+2. Se pose, ângulo, iluminação ou roupa são muito diferentes, aponte isso — afeta a percepção mais do que se imagina
+3. Se o intervalo for curto (menos de 3 semanas) e a diferença de peso pequena, lembre que variação diária de fluido/postura pode ser maior que a mudança real
+
+REGRAS:
+- Não faça julgamentos estéticos ou de saúde
+- Sem linguagem motivacional ou avaliativa ("melhorou", "parabéns", "está no caminho")
+- Tom neutro e conciso, em português
+- 2 a 3 parágrafos curtos, começando com o parágrafo mais importante`;
+
+  try {
+    const b64A = a.dataUrl.split(',')[1];
+    const b64B = b.dataUrl.split(',')[1];
+    const resp = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key=${encodeURIComponent(getKey())}`,
+      {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ parts: [
+            { text: prompt },
+            { inline_data: { mime_type: 'image/jpeg', data: b64A } },
+            { inline_data: { mime_type: 'image/jpeg', data: b64B } }
+          ]}],
+          generationConfig: { temperature: 0.3 }
+        })
+      }
+    );
+    if (!resp.ok) {
+      const errTxt = await resp.text();
+      let msg = `Erro ${resp.status}`;
+      try { const j = JSON.parse(errTxt); if (j.error?.message) msg += ': ' + j.error.message; }
+      catch { msg += ': ' + errTxt.slice(0, 150); }
+      throw new Error(msg);
+    }
+    const data = await resp.json();
+    const txt = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+    if (!txt) throw new Error('Resposta vazia da IA.');
+    const paragraphs = txt.trim().split(/\n\n+/).map(p => `<p>${escapeHtml(p)}</p>`).join('');
+    analysisBox.innerHTML = paragraphs;
+    analysisBox.classList.add('show');
+    btn.textContent = 'Analisar novamente';
+    btn.disabled = false;
+  } catch (e) {
+    analysisBox.innerHTML = `<p style="color:var(--danger)">Falha: ${escapeHtml(e.message)}</p>`;
+    analysisBox.classList.add('show');
+    btn.textContent = 'Tentar novamente';
+    btn.disabled = false;
+  }
+}
+
+function ingestUrlParams() {
+  const p = new URLSearchParams(window.location.search);
+  const steps = parseInt(p.get('steps'));
+  const active = parseInt(p.get('active_kcal'));
+  const weight = parseFloat(p.get('weight'));
+  let ingested = false;
+  const data = {};
+  if (!isNaN(steps) && steps >= 0) { data.steps = steps; ingested = true; }
+  if (!isNaN(active) && active >= 0) { data.active_kcal = active; ingested = true; }
+  if (Object.keys(data).length) saveHealthDay(data);
+  if (!isNaN(weight) && weight > 20 && weight < 300) { logWeight(weight); ingested = true; }
+  if (ingested) {
+    history.replaceState(null, '', window.location.pathname);
+    setTimeout(() => showToast('Saúde sincronizada.'), 200);
+  }
+}
+
+ingestUrlParams();
+if (!getKey()) openSettings();
+render();
+renderPhotosStrip();
+</script>
+</body>
+</html>
