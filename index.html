@@ -450,11 +450,14 @@ input[type=file] { display: none; }
 <div class="modal" id="healthModal">
   <div class="modal-content">
     <h2 class="modal-title">Sincronizar Saúde</h2>
-    <div class="modal-sub">Duas formas: Atalho iOS (automatiza) ou digitar.</div>
-    <div class="section-label">Digitar manualmente</div>
+    <div class="modal-sub">Registre os dados do relógio — pode ser de hoje ou de ontem.</div>
+    <div class="field">
+      <label for="healthDateInput">Dia</label>
+      <select id="healthDateInput"></select>
+    </div>
     <div class="field-row">
       <div class="field">
-        <label for="stepsInput">Passos hoje</label>
+        <label for="stepsInput">Passos</label>
         <input type="number" id="stepsInput" min="0" max="100000" inputmode="numeric">
       </div>
       <div class="field">
@@ -462,15 +465,9 @@ input[type=file] { display: none; }
         <input type="number" id="activeKcalInput" min="0" max="5000" inputmode="numeric">
       </div>
     </div>
-    <div class="section-label">Via Atalho iOS</div>
-    <div class="hint" style="font-size:13px; line-height:1.5; color:var(--text)">
-      No app <b>Atalhos</b> do iPhone, crie um Atalho que leia Passos e Energia Ativa do Saúde e abra este URL substituindo os valores:<br>
-      <code id="autoUrl" style="display:block; padding:8px; word-break:break-all; margin:8px 0">carregando…</code>
-      Passo a passo completo eu te passei na conversa.
-    </div>
     <div class="actions">
-      <button class="btn btn-secondary" onclick="closeHealthModal()">Fechar</button>
-      <button class="btn btn-primary" onclick="salvarHealth()">Salvar entrada manual</button>
+      <button class="btn btn-secondary" onclick="closeHealthModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="salvarHealth()">Salvar</button>
     </div>
   </div>
 </div>
@@ -699,25 +696,58 @@ function salvarPeso() {
   showToast('Peso registrado.');
 }
 
+function dateLabel(dateStr) {
+  const t = hoje();
+  if (dateStr === t) return 'Hoje';
+  const d = new Date(dateStr + 'T12:00:00');
+  const yesterday = new Date(); yesterday.setDate(yesterday.getDate() - 1);
+  const yStr = yesterday.getFullYear() + '-' + String(yesterday.getMonth()+1).padStart(2,'0') + '-' + String(yesterday.getDate()).padStart(2,'0');
+  if (dateStr === yStr) return 'Ontem';
+  const days = ['dom','seg','ter','qua','qui','sex','sáb'];
+  return days[d.getDay()] + ' ' + dateStr.slice(8) + '/' + dateStr.slice(5,7);
+}
+function recentDates(n) {
+  const dates = [];
+  for (let i = 0; i < n; i++) {
+    const d = new Date(); d.setDate(d.getDate() - i);
+    dates.push(d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'));
+  }
+  return dates;
+}
+
 function openHealthModal() {
+  const dates = recentDates(7);
+  const sel = document.getElementById('healthDateInput');
+  sel.innerHTML = dates.map(d => `<option value="${d}">${dateLabel(d)}</option>`).join('');
+  sel.value = dates[0];
+  sel.onchange = () => {
+    const h = getHealth()[sel.value] || {};
+    document.getElementById('stepsInput').value = h.steps || '';
+    document.getElementById('activeKcalInput').value = h.active_kcal || '';
+  };
   const h = getHealthToday();
   document.getElementById('stepsInput').value = h.steps || '';
   document.getElementById('activeKcalInput').value = h.active_kcal || '';
-  const url = window.location.origin + window.location.pathname + '?steps={PASSOS}&active_kcal={KCAL_ATIVAS}';
-  document.getElementById('autoUrl').textContent = url;
   document.getElementById('healthModal').classList.add('open');
 }
 function closeHealthModal() { document.getElementById('healthModal').classList.remove('open'); }
 function salvarHealth() {
+  const selectedDate = document.getElementById('healthDateInput').value;
   const steps = parseInt(document.getElementById('stepsInput').value);
   const active = parseInt(document.getElementById('activeKcalInput').value);
   const data = {};
   if (!isNaN(steps) && steps >= 0) data.steps = steps;
   if (!isNaN(active) && active >= 0) data.active_kcal = active;
-  if (Object.keys(data).length) saveHealthDay(data);
+  if (Object.keys(data).length) {
+    const h = getHealth();
+    h[selectedDate] = { ...(h[selectedDate] || {}), ...data };
+    saveHealth(h);
+  }
   closeHealthModal();
   render();
-  showToast('Saúde atualizada.');
+  renderDaysHistory();
+  const lbl = dateLabel(selectedDate);
+  showToast(`Saúde de ${lbl.toLowerCase()} atualizada.`);
 }
 
 function tirarFoto() {
@@ -776,7 +806,7 @@ Retorne APENAS um JSON válido, sem markdown, sem comentários, no formato exato
 Seja realista. Considere apenas o que está visível. Se não conseguir identificar nada, retorne {"itens":[]}.`;
   try {
     const resp = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent`,
       { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-goog-api-key': getKey() },
         body: JSON.stringify({
           contents: [{ parts: [{ text: prompt }, { inline_data: { mime_type: 'image/jpeg', data: b64 } }] }],
@@ -859,7 +889,7 @@ Seja realista e use valores calóricos médios de tabelas nutricionais brasileir
 
   try {
     const resp = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent`,
       { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-goog-api-key': getKey() },
         body: JSON.stringify({
           contents: [{ parts: [{ text: prompt }] }],
@@ -1233,7 +1263,7 @@ REGRAS:
     const b64A = a.dataUrl.split(',')[1];
     const b64B = b.dataUrl.split(',')[1];
     const resp = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent`,
       {
         method: 'POST', headers: { 'Content-Type': 'application/json', 'x-goog-api-key': getKey() },
         body: JSON.stringify({
