@@ -96,6 +96,11 @@ input[type=file]{display:none}
 .section-title{font-family:"Instrument Serif",serif;font-size:22px;font-style:italic;margin:20px 0 12px}
 .bev-section{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:16px 18px;margin-bottom:14px}
 .bev-title{font-size:13px;color:var(--muted);margin-bottom:10px}
+.bev-counter{display:flex;align-items:center;gap:8px;margin-bottom:12px;padding:10px 14px;background:var(--surface-2);border-radius:12px}
+.bev-counter .emoji{font-size:20px}.bev-counter-val{font-family:"Instrument Serif",serif;font-size:28px;font-style:italic;flex:1}
+.bev-counter-val small{font-size:13px;color:var(--muted);font-style:normal;font-family:inherit}
+.bev-counter button{width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--text);font-size:20px;display:grid;place-items:center;cursor:pointer}
+.bev-counter button:active{background:var(--accent-soft)}
 .bev-quick{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
 .bev-chip{padding:7px 12px;background:var(--surface-2);border:1px solid var(--line);border-radius:10px;font-size:13px;font-family:inherit;cursor:pointer;color:var(--text);display:flex;align-items:center;gap:4px}
 .bev-chip:active{background:var(--accent-soft)}
@@ -105,7 +110,11 @@ input[type=file]{display:none}
 .bev-entry{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--line);font-size:13px}
 .bev-entry:last-child{border-bottom:none}
 .bev-entry button{background:none;border:none;color:var(--muted);font-size:16px;cursor:pointer;padding:2px 6px}
-.meal{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px 16px;margin-bottom:8px;display:flex;gap:12px;align-items:center}
+.sweet-opts{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}
+.sweet-opt{padding:5px 10px;background:var(--surface-2);border:1px solid var(--line);border-radius:8px;font-size:12px;font-family:inherit;cursor:pointer;color:var(--text)}
+.sweet-opt.active{background:var(--accent);color:white;border-color:var(--accent)}
+.meal{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px 16px;margin-bottom:8px;display:flex;gap:12px;align-items:center;cursor:pointer}
+.meal:active{background:var(--surface-2)}
 .meal-info{flex:1;min-width:0}.meal-time{font-size:12px;color:var(--muted)}.meal-cat{font-size:10px;color:var(--accent);font-weight:500;text-transform:uppercase;letter-spacing:.3px}
 .meal-desc{font-size:14px;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .meal-kcal{font-family:"Instrument Serif",serif;font-size:22px;color:var(--accent);font-style:italic}
@@ -191,11 +200,17 @@ input[type=file]{display:none}
   <div id="mealPlanBox"></div>
   <div class="bev-section" id="bevSection">
     <div class="bev-title">Bebidas de hoje</div>
+    <div class="bev-counter">
+      <span class="emoji">💧</span>
+      <div class="bev-counter-val" id="waterCount">0<small> copos</small></div>
+      <button onclick="addWater(-1)">−</button>
+      <button onclick="addWater(1)">+</button>
+    </div>
     <div class="bev-quick">
-      <button class="bev-chip" onclick="addBev('Água',250,0)"><span class="emoji">💧</span>Água 250ml</button>
-      <button class="bev-chip" onclick="addBev('Café s/ açúcar',100,5)"><span class="emoji">☕</span>Café</button>
-      <button class="bev-chip" onclick="addBev('Chá',200,2)"><span class="emoji">🍵</span>Chá</button>
-      <button class="bev-chip" onclick="openBevModal()"><span class="emoji">+</span>Outra</button>
+      <button class="bev-chip" onclick="openBevModalPrefill('Café',100)"><span class="emoji">☕</span>Café</button>
+      <button class="bev-chip" onclick="openBevModalPrefill('Chá',200)"><span class="emoji">🍵</span>Chá</button>
+      <button class="bev-chip" onclick="openBevModalPrefill('Suco',250)"><span class="emoji">🧃</span>Suco</button>
+      <button class="bev-chip" onclick="openBevModalPrefill('',250)"><span class="emoji">+</span>Outra</button>
     </div>
     <div class="bev-log" id="bevLog"></div>
     <div class="bev-list" id="bevList"></div>
@@ -262,7 +277,17 @@ input[type=file]{display:none}
 <div class="modal" id="bevModal"><div class="modal-content">
   <h2 class="modal-title">Adicionar bebida</h2>
   <div class="field"><label for="bevNameInput">Bebida</label><input type="text" id="bevNameInput" placeholder="Ex: Suco de laranja"></div>
-  <div class="field-row"><div class="field"><label for="bevMlInput">Quantidade (ml)</label><input type="number" id="bevMlInput" min="0" max="5000" inputmode="numeric" value="250"></div><div class="field"><label for="bevKcalInput">kcal (0 se não souber)</label><input type="number" id="bevKcalInput" min="0" max="2000" inputmode="numeric" value="0"></div></div>
+  <div class="field"><label for="bevMlInput">Quantidade (ml)</label><input type="number" id="bevMlInput" min="0" max="5000" inputmode="numeric" value="250"></div>
+  <div class="field"><label>Adoçou com:</label>
+    <div class="sweet-opts" id="sweetOpts">
+      <button class="sweet-opt active" onclick="selSweet(this,'nenhum',0)">Nenhum</button>
+      <button class="sweet-opt" onclick="selSweet(this,'adocante',0)">Adoçante</button>
+      <button class="sweet-opt" onclick="selSweet(this,'1 colher açúcar',20)">1 col. açúcar</button>
+      <button class="sweet-opt" onclick="selSweet(this,'2 colheres açúcar',40)">2 col. açúcar</button>
+      <button class="sweet-opt" onclick="selSweet(this,'mel',30)">Mel</button>
+    </div>
+  </div>
+  <div class="field"><label for="bevKcalInput">kcal total da bebida</label><input type="number" id="bevKcalInput" min="0" max="2000" inputmode="numeric" value="0"><div class="hint">A IA não vê bebidas — se souber as kcal, coloque aqui. O adoçante já soma automaticamente.</div></div>
   <div class="actions"><button class="btn btn-secondary" onclick="closeBevModal()">Cancelar</button><button class="btn btn-primary" onclick="salvarBev()">Salvar</button></div>
 </div></div>
 <div class="modal" id="photoDetailModal"><div class="modal-content">
@@ -277,6 +302,24 @@ input[type=file]{display:none}
   <div class="privacy-note">Ao analisar, as fotos vão pro Gemini/Google. No tier gratuito, o Google pode usá-las pra treinar modelos.</div>
   <div class="compare-analysis" id="compareAnalysis"></div>
   <div class="actions"><button class="btn btn-secondary" onclick="closeCompareModal()">Fechar</button><button class="btn btn-primary" onclick="runCompareAnalysis()" id="analyzeBtn">Analisar com IA</button></div>
+</div></div>
+<div class="modal" id="editMealModal"><div class="modal-content">
+  <h2 class="modal-title">Editar refeição</h2>
+  <div class="modal-sub" id="editMealSub">—</div>
+  <div class="field"><label>Categoria</label><div class="cat-select" id="editCatSelect"></div></div>
+  <div class="field"><label for="editMealDesc">Descrição</label><textarea class="text-input-area" id="editMealDesc" style="min-height:60px"></textarea></div>
+  <div class="field-row">
+    <div class="field"><label for="editMealKcal">kcal</label><input type="number" id="editMealKcal" inputmode="numeric"></div>
+    <div class="field"><label for="editMealProt">Proteína (g)</label><input type="number" id="editMealProt" inputmode="numeric"></div>
+  </div>
+  <div class="field-row">
+    <div class="field"><label for="editMealCarb">Carbo (g)</label><input type="number" id="editMealCarb" inputmode="numeric"></div>
+    <div class="field"><label for="editMealFat">Gordura (g)</label><input type="number" id="editMealFat" inputmode="numeric"></div>
+  </div>
+  <div class="actions">
+    <button class="btn btn-secondary" onclick="closeEditMeal()">Cancelar</button>
+    <button class="btn btn-primary" onclick="salvarEdicaoRefeicao()">Salvar</button>
+  </div>
 </div></div>
 <div class="modal" id="backupModal"><div class="modal-content">
   <h2 class="modal-title">Backup</h2><div class="modal-sub">Exporte ou importe todos os seus dados.</div>
@@ -373,24 +416,52 @@ function render(){
   // Meals list
   const ml=document.getElementById('mealsList');
   if(meals.length===0){ml.innerHTML='<div class="empty">Nada registrado ainda hoje.</div>'}
-  else{ml.innerHTML=meals.map(m=>{const cl=CATS.find(c=>c.id===m.cat);return'<div class="meal"><div class="meal-info">'+(cl?'<div class="meal-cat">'+cl.lbl+'</div>':'')+'<div class="meal-time">'+esc(m.hora)+'</div><div class="meal-desc">'+esc(m.desc)+'</div></div><div class="meal-kcal">'+m.kcal+'<small>kcal</small></div><button class="meal-del" onclick="apagarRefeicao(\''+m.id+'\')" aria-label="Apagar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg></button></div>'}).join('')}
+  else{ml.innerHTML=meals.map(m=>{const cl=CATS.find(c=>c.id===m.cat);return'<div class="meal" onclick="openEditMeal(\''+m.id+'\')"><div class="meal-info">'+(cl?'<div class="meal-cat">'+cl.lbl+'</div>':'')+'<div class="meal-time">'+esc(m.hora)+'</div><div class="meal-desc">'+esc(m.desc)+'</div></div><div class="meal-kcal">'+m.kcal+'<small>kcal</small></div><button class="meal-del" onclick="event.stopPropagation();apagarRefeicao(\''+m.id+'\')" aria-label="Apagar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg></button></div>'}).join('')}
   // Beverages
   renderBevs();
 }
 // Beverages
 function renderBevs(){
   const bevs=getBevs().filter(b=>b.data===hoje());
-  const totalMl=bevs.reduce((s,b)=>s+b.ml,0);
+  const waterCups=bevs.filter(b=>b.tipo==='agua').reduce((s,b)=>s+b.qty,0);
+  const waterMl=waterCups*250;
+  const otherBevs=bevs.filter(b=>b.tipo!=='agua');
+  const totalMl=waterMl+otherBevs.reduce((s,b)=>s+b.ml,0);
   const totalKcal=bevs.reduce((s,b)=>s+(b.kcal||0),0);
-  document.getElementById('bevLog').innerHTML=bevs.length?'<b>'+totalMl+'ml</b> total'+(totalKcal?' · '+totalKcal+' kcal':''):'Nenhuma bebida registrada.';
-  document.getElementById('bevList').innerHTML=bevs.map(b=>'<div class="bev-entry"><span>'+esc(b.nome)+' — '+b.ml+'ml'+(b.kcal?' · '+b.kcal+'kcal':'')+'</span><button onclick="delBev(\''+b.id+'\')">×</button></div>').join('');
+  document.getElementById('waterCount').innerHTML=waterCups+'<small> copos · '+waterMl+'ml</small>';
+  document.getElementById('bevLog').innerHTML=otherBevs.length||waterCups?'<b>'+totalMl+'ml</b> líquidos total'+(totalKcal?' · '+totalKcal+' kcal':''):'';
+  document.getElementById('bevList').innerHTML=otherBevs.map(b=>'<div class="bev-entry"><span>'+esc(b.nome)+(b.sweet&&b.sweet!=='nenhum'?' + '+esc(b.sweet):'')+' — '+b.ml+'ml'+(b.kcal?' · '+b.kcal+'kcal':'')+'</span><button onclick="delBev(\''+b.id+'\')">×</button></div>').join('');
 }
-function addBev(nome,ml,kcal){const bs=getBevs();bs.unshift({id:Date.now().toString(36),data:hoje(),nome,ml,kcal:kcal||0});saveBevs(bs);render()}
+function addWater(delta){
+  const bevs=getBevs();let existing=bevs.find(b=>b.data===hoje()&&b.tipo==='agua');
+  if(existing){existing.qty=Math.max(0,existing.qty+delta);if(existing.qty===0){saveBevs(bevs.filter(b=>b.id!==existing.id))}else{saveBevs(bevs)}}
+  else if(delta>0){bevs.unshift({id:Date.now().toString(36),data:hoje(),tipo:'agua',nome:'Água',qty:1,ml:250,kcal:0});saveBevs(bevs)}
+  render()}
+function addBev(nome,ml,kcal,sweet){const bs=getBevs();bs.unshift({id:Date.now().toString(36),data:hoje(),nome,ml,kcal:kcal||0,sweet:sweet||''});saveBevs(bs);render()}
 function delBev(id){saveBevs(getBevs().filter(b=>b.id!==id));render()}
-function openBevModal(){document.getElementById('bevNameInput').value='';document.getElementById('bevMlInput').value='250';document.getElementById('bevKcalInput').value='0';document.getElementById('bevModal').classList.add('open')}
+let currentSweetKcal=0,currentSweet='nenhum';
+function selSweet(el,name,kcal){currentSweet=name;currentSweetKcal=kcal;document.querySelectorAll('#sweetOpts .sweet-opt').forEach(e=>e.classList.remove('active'));el.classList.add('active');
+  const base=parseInt(document.getElementById('bevKcalInput').dataset.base)||0;document.getElementById('bevKcalInput').value=base+kcal}
+function openBevModalPrefill(nome,ml){document.getElementById('bevNameInput').value=nome;document.getElementById('bevMlInput').value=ml;document.getElementById('bevKcalInput').value='0';document.getElementById('bevKcalInput').dataset.base='0';currentSweet='nenhum';currentSweetKcal=0;
+  document.querySelectorAll('#sweetOpts .sweet-opt').forEach((e,i)=>e.classList.toggle('active',i===0));document.getElementById('bevModal').classList.add('open')}
 function closeBevModal(){document.getElementById('bevModal').classList.remove('open')}
 function salvarBev(){const n=document.getElementById('bevNameInput').value.trim();if(!n){showError('Digite o nome da bebida.');return}
-  addBev(n,parseInt(document.getElementById('bevMlInput').value)||250,parseInt(document.getElementById('bevKcalInput').value)||0);closeBevModal()}
+  const ml=parseInt(document.getElementById('bevMlInput').value)||250,kcal=parseInt(document.getElementById('bevKcalInput').value)||0;
+  addBev(n,ml,kcal,currentSweet!=='nenhum'?currentSweet:'');closeBevModal()}
+
+// Edit meal
+let editingMealId=null,editCatSel='almoco';
+function openEditMeal(id){const meals=getMeals(),m=meals.find(x=>x.id===id);if(!m)return;editingMealId=id;editCatSel=m.cat||'almoco';
+  document.getElementById('editMealSub').textContent=m.hora+' · '+m.kcal+' kcal';
+  document.getElementById('editMealDesc').value=m.desc;document.getElementById('editMealKcal').value=m.kcal||0;
+  document.getElementById('editMealProt').value=m.prot||0;document.getElementById('editMealCarb').value=m.carb||0;document.getElementById('editMealFat').value=m.fat||0;
+  document.getElementById('editCatSelect').innerHTML=CATS.map(c=>'<button class="cat-opt'+(c.id===editCatSel?' active':'')+'" onclick="editCatSel=\''+c.id+'\';document.querySelectorAll(\'#editCatSelect .cat-opt\').forEach(e=>e.classList.toggle(\'active\',e.textContent===\''+c.lbl+'\'))">'+c.lbl+'</button>').join('');
+  document.getElementById('editMealModal').classList.add('open')}
+function closeEditMeal(){document.getElementById('editMealModal').classList.remove('open');editingMealId=null}
+function salvarEdicaoRefeicao(){if(!editingMealId)return;const meals=getMeals(),m=meals.find(x=>x.id===editingMealId);if(!m){closeEditMeal();return}
+  m.desc=document.getElementById('editMealDesc').value.trim();m.kcal=parseInt(document.getElementById('editMealKcal').value)||0;
+  m.prot=parseInt(document.getElementById('editMealProt').value)||0;m.carb=parseInt(document.getElementById('editMealCarb').value)||0;m.fat=parseInt(document.getElementById('editMealFat').value)||0;m.cat=editCatSel;
+  saveMeals(meals);closeEditMeal();render();renderDaysHistory();showToast('Refeição atualizada.')}
 
 // Settings
 function openSettings(){const p=getProfile();document.getElementById('apiKeyInput').value=getKey();document.getElementById('sexInput').value=p.sex||'';document.getElementById('ageInput').value=p.age||'';document.getElementById('heightInput').value=p.height_cm||'';document.getElementById('weightInput').value=p.weight_kg||'';document.getElementById('targetInput').value=p.target_kg||'';document.getElementById('activityInput').value=p.activity||'light';document.getElementById('metaInput').value=getMetaManual()||'';document.getElementById('settingsModal').classList.add('open')}
